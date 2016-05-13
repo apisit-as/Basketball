@@ -1,0 +1,158 @@
+<html>
+<head>
+<title>MainActivity.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(0,0,128); font-weight: bold; }
+.s1 { }
+.s2 { color: rgb(128,128,128); font-style: italic; }
+.s3 { color: rgb(0,128,0); font-weight: bold; }
+.s4 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+MainActivity.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">package </span><span class="s1">rmuti.newbasketball; 
+ 
+</span><span class="s0">import </span><span class="s1">android.content.ContentValues; 
+</span><span class="s0">import </span><span class="s1">android.database.Cursor; 
+</span><span class="s0">import </span><span class="s1">android.database.sqlite.SQLiteDatabase; 
+</span><span class="s0">import </span><span class="s1">android.support.v7.app.AppCompatActivity; 
+</span><span class="s0">import </span><span class="s1">android.os.Bundle; 
+ 
+</span><span class="s0">import </span><span class="s1">android.view.View; 
+</span><span class="s0">import </span><span class="s1">android.widget.AdapterView; 
+</span><span class="s0">import </span><span class="s1">android.widget.ArrayAdapter; 
+</span><span class="s0">import </span><span class="s1">android.widget.EditText; 
+</span><span class="s0">import </span><span class="s1">android.widget.ListView; 
+</span><span class="s0">import </span><span class="s1">android.widget.TextView; 
+ 
+</span><span class="s0">import </span><span class="s1">java.util.ArrayList; 
+ 
+</span><span class="s0">public class </span><span class="s1">MainActivity </span><span class="s0">extends </span><span class="s1">AppCompatActivity { 
+    </span><span class="s0">private </span><span class="s1">SQLiteDatabase db; 
+    </span><span class="s0">private </span><span class="s1">Cursor c; 
+    </span><span class="s0">int </span><span class="s1">id; 
+    </span><span class="s0">private </span><span class="s1">ArrayAdapter adapter; 
+    @Override 
+    </span><span class="s0">protected void </span><span class="s1">onCreate(Bundle savedInstanceState) { 
+        </span><span class="s0">super</span><span class="s1">.onCreate(savedInstanceState); 
+        setContentView(R.layout.activity_main); 
+ 
+        </span><span class="s2">// Database</span><span class="s1"> 
+        db = </span><span class="s0">this</span><span class="s1">.openOrCreateDatabase(</span><span class="s3">&quot;mydatabase&quot;</span><span class="s1">,MODE_PRIVATE,</span><span class="s0">null</span><span class="s1">); 
+        String sql = </span><span class="s3">&quot;&quot;</span><span class="s1"> 
+                + </span><span class="s3">&quot; CREATE TABLE IF NOT EXISTS db(&quot;</span><span class="s1"> 
+                + </span><span class="s3">&quot;   id INTEGER PRIMARY KEY AUTOINCREMENT ,&quot;</span><span class="s1"> 
+                + </span><span class="s3">&quot;   location VARCHAR,&quot; </span><span class="s1">+ </span><span class="s3">&quot; date VARCHAR,&quot; </span><span class="s1">+ </span><span class="s3">&quot; time VARCHAR&quot; </span><span class="s1">+ </span><span class="s3">&quot; )&quot;</span><span class="s1">; 
+        db.execSQL(sql); 
+        bindData(); 
+    } 
+ 
+    </span><span class="s0">private void </span><span class="s1">bindData(){ 
+        String sql = </span><span class="s3">&quot;SELECT * FROM db&quot;</span><span class="s1">; 
+        c = db.rawQuery(sql, </span><span class="s0">null</span><span class="s1">); 
+ 
+        </span><span class="s0">int </span><span class="s1">item = android.R.layout.simple_list_item_1; 
+        ArrayList data = </span><span class="s0">new </span><span class="s1">ArrayList(); 
+ 
+        </span><span class="s0">while</span><span class="s1">(c.moveToNext()){ 
+            </span><span class="s0">int </span><span class="s1">index = c.getColumnIndex(</span><span class="s3">&quot;location&quot;</span><span class="s1">); 
+            data.add(c.getString(index)); 
+        } 
+ 
+        adapter = </span><span class="s0">new </span><span class="s1">ArrayAdapter(</span><span class="s0">this</span><span class="s1">, item, data); 
+ 
+        ListView myList = (ListView) findViewById(R.id.myList); 
+        myList.setAdapter(adapter); 
+        myList.setOnItemClickListener(</span><span class="s0">new </span><span class="s1">AdapterView.OnItemClickListener() { 
+            @Override 
+            </span><span class="s0">public void </span><span class="s1">onItemClick(AdapterView&lt;?&gt; av, View v, </span><span class="s0">int </span><span class="s1">i, </span><span class="s0">long </span><span class="s1">l) { 
+                itemClick(i); 
+            } 
+        }); 
+    } 
+ 
+    </span><span class="s0">public void </span><span class="s1">doNew(View v){ 
+        setContentView(R.layout.form); 
+    } 
+ 
+    </span><span class="s0">public void </span><span class="s1">doSave(View v){ 
+        EditText txtLocation = (EditText) findViewById(R.id.txtLocation); 
+        EditText txtDate = (EditText) findViewById(R.id.txtDate); 
+        EditText txtTime = (EditText) findViewById(R.id.txtTime); 
+ 
+        String location = txtLocation.getText().toString(); 
+        String date = txtDate.getText().toString(); 
+        String time = txtTime.getText().toString(); 
+ 
+        </span><span class="s0">if</span><span class="s1">(location.equals(</span><span class="s3">&quot;&quot;</span><span class="s1">) || date.equals(</span><span class="s3">&quot;&quot;</span><span class="s1">) || time.equals(</span><span class="s3">&quot;&quot;</span><span class="s1">)){ 
+ 
+        }</span><span class="s0">else</span><span class="s1">{ 
+            String sql = </span><span class="s3">&quot;&quot;</span><span class="s1">; 
+            </span><span class="s0">if</span><span class="s1">(id == </span><span class="s4">0</span><span class="s1">){ 
+                sql = </span><span class="s3">&quot;INSERT INTO db VALUES(null, ':location', ':date', ':time')&quot;</span><span class="s1">; 
+                sql = sql.replace(</span><span class="s3">&quot;:location&quot;</span><span class="s1">,location); 
+                sql = sql.replace(</span><span class="s3">&quot;:date&quot;</span><span class="s1">,date); 
+                sql = sql.replace(</span><span class="s3">&quot;:time&quot;</span><span class="s1">,time); 
+                db.execSQL(sql); 
+            }</span><span class="s0">else</span><span class="s1">{ 
+                ContentValues value = </span><span class="s0">new </span><span class="s1">ContentValues(); 
+                value.put(</span><span class="s3">&quot;location&quot;</span><span class="s1">, location); 
+                value.put(</span><span class="s3">&quot;date&quot;</span><span class="s1">,date); 
+                value.put(</span><span class="s3">&quot;time&quot;</span><span class="s1">,time); 
+                db.update(</span><span class="s3">&quot;db&quot;</span><span class="s1">, value, </span><span class="s3">&quot;id = &quot;</span><span class="s1">+ id, </span><span class="s0">null</span><span class="s1">); 
+                id = </span><span class="s4">0</span><span class="s1">; 
+            } 
+            setContentView(R.layout.activity_main); 
+            bindData(); 
+        } 
+    } 
+    </span><span class="s0">public void </span><span class="s1">doHome(View v){ 
+        setContentView(R.layout.activity_main); 
+        id = </span><span class="s4">0</span><span class="s1">; 
+        bindData(); 
+    } 
+    </span><span class="s0">public void </span><span class="s1">doDelete(View v){ 
+        db.delete(</span><span class="s3">&quot;db&quot;</span><span class="s1">, </span><span class="s3">&quot;id = &quot; </span><span class="s1">+ id, </span><span class="s0">null</span><span class="s1">); 
+        doHome(v); 
+    } 
+    </span><span class="s0">public void </span><span class="s1">doEdit(View v){ 
+ 
+        id = c.getInt(c.getColumnIndex(</span><span class="s3">&quot;id&quot;</span><span class="s1">)); 
+        setContentView(R.layout.form); 
+        EditText txtLocation = (EditText) findViewById(R.id.txtLocation); 
+        EditText txtDate = (EditText) findViewById(R.id.txtDate); 
+        EditText txtTime = (EditText) findViewById(R.id.txtTime); 
+ 
+        txtLocation.setText(c.getString(c.getColumnIndex(</span><span class="s3">&quot;location&quot;</span><span class="s1">))); 
+        txtDate.setText(c.getString(c.getColumnIndex(</span><span class="s3">&quot;date&quot;</span><span class="s1">))); 
+        txtTime.setText(c.getString(c.getColumnIndex(</span><span class="s3">&quot;time&quot;</span><span class="s1">))); 
+    } 
+ 
+    </span><span class="s0">public void </span><span class="s1">itemClick(</span><span class="s0">int </span><span class="s1">index){ 
+        c.moveToPosition(index); 
+        id = c.getInt(c.getColumnIndex(</span><span class="s3">&quot;id&quot;</span><span class="s1">)); 
+        setContentView(R.layout.show); 
+ 
+        TextView location = (TextView)findViewById(R.id.location); 
+        TextView date = (TextView)findViewById(R.id.date); 
+        TextView time = (TextView)findViewById(R.id.time); 
+ 
+        location.setText(c.getString(c.getColumnIndex(</span><span class="s3">&quot;location&quot;</span><span class="s1">))); 
+        date.setText(c.getString(c.getColumnIndex(</span><span class="s3">&quot;date&quot;</span><span class="s1">))); 
+        time.setText(c.getString(c.getColumnIndex(</span><span class="s3">&quot;time&quot;</span><span class="s1">))); 
+ 
+    } 
+ 
+} 
+</span></pre>
+</body>
+</html>
